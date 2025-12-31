@@ -1,5 +1,6 @@
 import math
 from pathlib import Path
+from .wordlist import find_dictionary_words, filter_overlapping_hits
 
 def load_wordlist(path: str | Path, min_len: int = 3) -> set[str]:
     """
@@ -28,6 +29,9 @@ def analyze_password(password: str) -> dict:
     non_ascii = 0
 
     char_frequency = {}
+
+    raw_dictionary_hits = find_dictionary_words(password, min_len=4)
+    dictionary_hits = filter_overlapping_hits(raw_dictionary_hits)
 
     for c in password:
         # frequency
@@ -78,6 +82,7 @@ def analyze_password(password: str) -> dict:
         "unique_chars": unique_chars,
         "char_frequency": char_frequency,
         "entropy_bits": entropy_bits,
+        "dictionary_hits": dictionary_hits
     }
 
 def score_password(analysis: dict) -> int:

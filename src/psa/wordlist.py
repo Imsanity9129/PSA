@@ -63,3 +63,33 @@ def find_dictionary_words(password: str, *, min_len: int = 4) -> list[dict]:
                 hits.append({"word": sub, "start": i, "end": j})
 
     return hits
+
+def filter_overlapping_hits(hits: list[dict]) -> list[dict]:
+    """
+    Keep a clean subset of dictionary hits by removing overlaps.
+    Strategy: prefer longer hits; keep non-overlapping.
+    """
+    if not hits:
+        return []
+
+    # Sort: longer words first, then earlier start
+    hits_sorted = sorted(
+        hits,
+        key=lambda h: (-(h["end"] - h["start"]), h["start"], h["end"])
+    )
+
+    kept: list[dict] = []
+    occupied = [False] * (max(h["end"] for h in hits_sorted))
+
+    for h in hits_sorted:
+        start, end = h["start"], h["end"]
+        # check overlap with already-kept spans
+        if any(occupied[i] for i in range(start, end)):
+            continue
+        kept.append(h)
+        for i in range(start, end):
+            occupied[i] = True
+
+    # Optional: return in reading order
+    kept.sort(key=lambda h: (h["start"], h["end"]))
+    return kept
