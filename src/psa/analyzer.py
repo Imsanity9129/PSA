@@ -1,6 +1,7 @@
 import math
 from pathlib import Path
 from .wordlist import find_dictionary_words, filter_overlapping_hits
+from .patterns import max_consecutive_repeats, sequential_runs, keyboard_runs_qwerty
 
 def load_wordlist(path: str | Path, min_len: int = 3) -> set[str]:
     """
@@ -30,8 +31,15 @@ def analyze_password(password: str) -> dict:
 
     char_frequency = {}
 
+    # Dictionary words
     raw_dictionary_hits = find_dictionary_words(password, min_len=4)
     dictionary_hits = filter_overlapping_hits(raw_dictionary_hits)
+
+    # Patterns
+    max_repeat_run = max_consecutive_repeats(password)
+    sequences = sequential_runs(password, min_len=3)
+    keyboard_runs = keyboard_runs_qwerty(password, min_len=3)
+
 
     for c in password:
         # frequency
@@ -82,6 +90,9 @@ def analyze_password(password: str) -> dict:
         "unique_chars": unique_chars,
         "char_frequency": char_frequency,
         "entropy_bits": entropy_bits,
+        "max_consecutive_repeats": max_repeat_run,
+        "sequential_runs": sequences,
+        "keyboard_runs": keyboard_runs,
         "dictionary_hits": dictionary_hits
     }
 
@@ -113,7 +124,7 @@ def rating_from_score(score: int) -> str:
         return "Strong"
     
 
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     pw = input("Enter password: ")
 
     analysis = analyze_password(pw)
@@ -123,5 +134,5 @@ if __name__ == "__main__":
     print("Analysis:", analysis)
     print("Score:", score)
     print("Rating:", rating)
-    
+     """
     
