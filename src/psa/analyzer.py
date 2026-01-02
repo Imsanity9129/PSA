@@ -3,21 +3,6 @@ from pathlib import Path
 from .wordlist import find_dictionary_words, filter_overlapping_hits
 from .patterns import max_consecutive_repeats, sequential_runs, keyboard_runs_qwerty
 
-def load_wordlist(path: str | Path, min_len: int = 3) -> set[str]:
-    """
-    Load a newline-delimited wordlist file into a set.
-    """
-    path = Path(path)
-    words: set[str] = set()
-
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            w = line.strip().lower()
-            # keep it simple + clean
-            if len(w) >= min_len and w.isalpha():
-                words.add(w)
-
-    return words
 
 def analyze_password(password: str) -> dict:
     length = len(password)
@@ -96,32 +81,6 @@ def analyze_password(password: str) -> dict:
         "dictionary_hits": dictionary_hits
     }
 
-def score_password(analysis: dict) -> int:
-    """
-    Score a password on a 0–100 scale based on analysis.
-    """
-    score = 0
-    length = analysis["length"]
-
-    # Length is king
-    score += min(length * 4, 60)
-
-    # Diversity helps, but doesn't dominate
-    score += analysis["char_classes_used"] * 7.5
-
-    # Short password penalty
-    if length < 8:
-        score -= 20
-
-    return max(0, min(100, int(score)))
-
-def rating_from_score(score: int) -> str:
-    if score < 40:
-        return "Weak"
-    elif score < 70:
-        return "Moderate"
-    else:
-        return "Strong"
     
 
 """ if __name__ == "__main__":
