@@ -1,6 +1,3 @@
-# Password-Strength-Analyzer-V1
-Local-only password strength analyzer with explainable security feedback
-
 # Password Strength Analyzer (PSA)
 
 A modular password strength analyzer that performs factual password analysis and explainable scoring.  
